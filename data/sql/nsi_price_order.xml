@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table name="nsi_price_order">
+  <comment>Ценовой запрос</comment>
+  <columns>
+    <column name="id">
+      <comment>Идентификатор</comment>
+      <type>serial</type>
+      <constraint>not-null primary</constraint>
+      <comment>Уникальный ключ</comment>
+    </column>
+    <column name="type">
+        <comment>Тип ценового запроса</comment>
+        <type length="8">varchar</type>
+        <default>'std'</default>
+        <constraint>not-null</constraint>
+        <references name="nsi_price_order_type_fkey">
+            <table>nsi_vocab_price_order_types</table>
+            <column>code</column>
+        </references>
+    </column>
+    <column name="title">
+      <comment>Название заказа</comment>
+      <type length="1000">varchar</type>
+    </column>
+    <column name="customer_id">
+      <type>integer</type>
+      <constraint>not-null</constraint>
+      <references name="nsi_basket_contragents_id_fkey">
+        <table>contragents</table>
+        <column>id</column>
+      </references>
+    </column>
+    <column name="user_id">
+      <comment>Идентификатор пользователя, создавшего ЦЗ</comment>
+      <type>integer</type>
+      <references name="users_id_fkey">
+        <table>users</table>
+        <column>id</column>
+      </references>
+    </column>
+    <column name="date_created">
+      <type>timestamp with time zone</type>
+    </column>
+    <column name="date_sent">
+      <type>timestamp with time zone</type>
+      <comment>Дата отправки, дата, когда ЦЗ был направлен Поставщикам</comment>
+    </column>
+    <column name="date_response">
+      <type>timestamp with time zone</type>
+      <comment>Дата к которой необходимы ответы от поставщиков</comment>
+    </column>
+    <column name="date_delivery">
+      <type>timestamp with time zone</type>
+      <comment>Дата к которой заказчик планирует получить заказ</comment>
+    </column>
+    <column name="status">
+      <type>integer</type>
+      <references name="nsi_vocab_price_order_status_id_fkey">
+        <table>nsi_vocab_price_order_status</table>
+        <column>id</column>
+      </references>
+    </column>
+    <column name="delivery_address">
+      <comment>Адрес поставки</comment>
+      <type>text</type>
+    </column>
+    <column name="delivery_conditions">
+      <comment>Условия доставки и оплаты</comment>
+      <type>text</type>
+    </column>
+    <column name="decision_basis">
+      <comment>Обоснование выбора поставщика</comment>
+      <type>text</type>
+    </column>
+    <column name="winner_supplier_id">
+      <comment>Идентификатор ЦЗ поставщика победителя</comment>
+      <type>integer</type>
+      <references name="nsi_price_order_winner_supplier_id_fkey">
+        <table>nsi_price_order_supplier</table>
+        <column>id</column>
+        <on-delete>cascade</on-delete>
+      </references>
+    </column>
+    <column name="reject_reason">
+        <type>text</type>
+        <comment>Причина отмены</comment>
+    </column>
+    <column name="approve_reason">
+        <type>text</type>
+        <comment>Обоснование проведения закупки</comment>
+    </column>
+  </columns>
+  <indexes>
+    <index name="nsi_price_order_customer_id_idx">
+      <type>btree</type>
+      <expression>customer_id</expression>
+    </index>
+    <index name="nsi_price_order_user_id_idx">
+      <type>btree</type>
+      <expression>user_id</expression>
+    </index>
+    <index name="nsi_price_order_winner_supplier_id_fkey">
+      <type>btree</type>
+      <expression>winner_supplier_id</expression>
+    </index>
+    <index name="nsi_price_order_type_idx">
+        <type>btree</type>
+        <expression>type</expression>
+    </index>
+  </indexes>
+</table>
